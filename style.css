@@ -1,0 +1,53 @@
+.main {
+    margin: 0px auto;
+    width: 60%;
+    background-color: aliceblue;
+    padding: 20px;
+    border: 1px solid rgba(0,0,0, 0.2);
+    border-radius: 5px;
+    box-shadow: 0px 0px 30px rgba(0,0,0, 0.2);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.playerInfo {
+    width: 40%;
+    background-color: lightblue;
+    border: 1px solid rgba(0,0,0, 0.2);
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.statusMessage {
+    margin-top: 1em;
+    box-sizing: border-box;
+    width: 100%;
+    background-color: lightgreen;
+    border: 1px solid rgba(0,0,0, 0.2);
+    border-radius: 5px;
+    text-align: center;
+}
+
+.gameBoard {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1em;
+    width:fit-content;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1em;
+}
+
+.cell {
+    background-color:silver;
+    height: 20vh;
+    width: 20vh;
+}
+
+.cell:hover {
+    box-shadow: 0px 0px 10px rgba(0,0,0, 0.2);
+}
