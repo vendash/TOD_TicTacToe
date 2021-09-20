@@ -33,8 +33,8 @@ const playerFactory = function (name, mark, isHuman, focus) {
 
 const gameController = (function () {
 
-    const Player1 = playerFactory('Lilla', '❌', true, 1);
-    const Player2 = playerFactory('Juli', '⭕', false, 1);
+    const Player1 = playerFactory('Player 1', '❌', true, 1);
+    const Player2 = playerFactory('Player 2', '⭕', false, 1);
 
     let currentPlayer = Player1;
     let enemyPlayer = Player2;
