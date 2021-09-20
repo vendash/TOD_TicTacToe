@@ -12,27 +12,34 @@
     <div class="main">
         <div class="header">
             <div class="playerInfo">
-                <p>Player 1</p>
-                <p>Score: 0</p>
+                <p id="player1Name">Player 1</p>
+                <p id="player1Mark">Mark: X</p>
+                <p id="player1Score">Score: 0</p>
             </div>
             <div class="playerInfo">
-                <p>Player 2</p>
-                <p>Score: 0</p>
+                <p id="player2Name">Player 2</p>
+                <p id="player2Mark">Mark: O</p>
+                <p id="player2Score">Score: 0</p>
             </div>
         </div>
         <div class="statusMessage">
             <p>Status Message comes here</p>
         </div>
         <div class="gameBoard">
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>                        
+            <div data-cell="0" class="cell"><p class="mark"></p><p class="miniMaxScores">10</p></div>
+            <div data-cell="1" class="cell"><p class="mark"></p><p class="miniMaxScores">10</p></div>
+            <div data-cell="2" class="cell"><p class="mark"></p><p class="miniMaxScores">10</p></div>
+            <div data-cell="3" class="cell"><p class="mark"></p><p class="miniMaxScores">10</p></div>
+            <div data-cell="4" class="cell"><p class="mark"></p><p class="miniMaxScores">10</p></div>
+            <div data-cell="5" class="cell"><p class="mark"></p><p class="miniMaxScores">10</p></div>
+            <div data-cell="6" class="cell"><p class="mark"></p><p class="miniMaxScores">10</p></div>
+            <div data-cell="7" class="cell"><p class="mark"></p><p class="miniMaxScores">10</p></div>
+            <div data-cell="8" class="cell"><p class="mark"></p><p class="miniMaxScores">10</p></div>                        
+        </div>
+        <div>
+            <button id="newGame">New Game</button>
+            <label for="shomMiniMax">Show MiniMax Computed Scores</label>
+            <input type="checkbox" name="showMiniMax" id="showMiniMax" checked>
         </div>
     </div>
 

@@ -1,6 +1,11 @@
+body {
+    margin: 0px;
+
+}
+
 .main {
     margin: 0px auto;
-    width: 60%;
+    width: 85%;
     background-color: aliceblue;
     padding: 20px;
     border: 1px solid rgba(0,0,0, 0.2);
@@ -15,7 +20,7 @@
 }
 
 .playerInfo {
-    width: 40%;
+    width: 45%;
     background-color: lightblue;
     border: 1px solid rgba(0,0,0, 0.2);
     border-radius: 5px;
@@ -33,21 +38,35 @@
 }
 
 .gameBoard {
-    margin-left: auto;
-    margin-right: auto;
+
     margin-top: 1em;
-    width:fit-content;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1em;
+    grid-template-columns: repeat(3, auto);
+    gap: 0.3em;
+    justify-content: center;
+    align-items: center;
 }
 
 .cell {
     background-color:silver;
-    height: 20vh;
-    width: 20vh;
+    width: 150px;
+    height: 150px;
+    text-align: center;
+    font-size: 9em;
+    font-family: monospace;
+    font-weight: bold;
 }
 
 .cell:hover {
     box-shadow: 0px 0px 10px rgba(0,0,0, 0.2);
+}
+
+.mark {
+    margin: auto;
+}
+
+.miniMaxScores {
+    font-size: 8px;
+    margin: 0;
+    color: darkred;
 }
