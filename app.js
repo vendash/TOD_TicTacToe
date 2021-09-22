@@ -5,15 +5,9 @@ const playerFactory = function (name, mark, color, isHuman, focus) {
     let score = 0;
 
     const randomMove = function (cells) {
-        console.log('Fuuuuuck')
         return cells[Math.floor(Math.random() * cells.length)];
     }
 
-    //Give a focus in percentage 0.00-1 range. 
-    //Gives a random true of false is a player is focusing or not
-    //If focusing, use bestMove later, if not, use randomMove
-    //1 - Impossible
-    //0 - Full random moves
     const isFocusing = function () {
         if (focus >= 1) {
             return true;
@@ -87,8 +81,7 @@ const gameController = (function () {
         const win = _checkWin(board, mark);
         const isEmptySpot = board.some(e => e === '');
 
-        const result = (win === false && !isEmptySpot);
-        return result ? true : false;
+        return win === false && !isEmptySpot
     }
 
     const _bestMove = function (board) {
