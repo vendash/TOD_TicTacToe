@@ -5,41 +5,48 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Odin Project - TicTacToe</title>
+    
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="main">
         <div class="header">
-            <div class="playerInfo">
+            <div class="player-info">
                 <p id="player1Name">Player 1</p>
                 <p id="player1Mark">Mark: X</p>
                 <p id="player1Score">Score: 0</p>
             </div>
-            <div class="playerInfo">
+            <div class="player-info">
                 <p id="player2Name">Player 2</p>
                 <p id="player2Mark">Mark: O</p>
                 <p id="player2Score">Score: 0</p>
             </div>
         </div>
-        <div class="statusMessage">
+        <div class="status-message">
             <p>Status Message comes here</p>
         </div>
-        <div class="gameBoard">
-            <div data-cell="0" class="cell"><p class="mark"></p><p class="miniMaxScores">10</p></div>
-            <div data-cell="1" class="cell"><p class="mark"></p><p class="miniMaxScores">10</p></div>
-            <div data-cell="2" class="cell"><p class="mark"></p><p class="miniMaxScores">10</p></div>
-            <div data-cell="3" class="cell"><p class="mark"></p><p class="miniMaxScores">10</p></div>
-            <div data-cell="4" class="cell"><p class="mark"></p><p class="miniMaxScores">10</p></div>
-            <div data-cell="5" class="cell"><p class="mark"></p><p class="miniMaxScores">10</p></div>
-            <div data-cell="6" class="cell"><p class="mark"></p><p class="miniMaxScores">10</p></div>
-            <div data-cell="7" class="cell"><p class="mark"></p><p class="miniMaxScores">10</p></div>
-            <div data-cell="8" class="cell"><p class="mark"></p><p class="miniMaxScores">10</p></div>                        
+        <div class="gameboard gameboard-big">
+            <div data-cell="0" class="cell cell-big"><p class="mark"></p></div>
+            <div data-cell="1" class="cell cell-big"><p class="mark"></p></div>
+            <div data-cell="2" class="cell cell-big"><p class="mark"></p></div>
+            <div data-cell="3" class="cell cell-big"><p class="mark"></p></div>
+            <div data-cell="4" class="cell cell-big"><p class="mark"></p></div>
+            <div data-cell="5" class="cell cell-big"><p class="mark"></p></div>
+            <div data-cell="6" class="cell cell-big"><p class="mark"></p></div>
+            <div data-cell="7" class="cell cell-big"><p class="mark"></p></div>
+            <div data-cell="8" class="cell cell-big"><p class="mark"></p></div>                        
         </div>
         <div>
             <button id="newGame">New Game</button>
             <label for="shomMiniMax">Show MiniMax Computed Scores</label>
             <input type="checkbox" name="showMiniMax" id="showMiniMax" checked>
+        </div>
+
+        <div class="possible-moves">
+
         </div>
     </div>
 

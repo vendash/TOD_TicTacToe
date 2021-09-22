@@ -1,9 +1,9 @@
 const debug = true;
 
-const playerFactory = function (name, mark, isHuman, focus) {
-    
+const playerFactory = function (name, mark, color, isHuman, focus) {
+
     let score = 0;
-    
+
     const randomMove = function (cells) {
         console.log('Fuuuuuck')
         return cells[Math.floor(Math.random() * cells.length)];
@@ -14,8 +14,8 @@ const playerFactory = function (name, mark, isHuman, focus) {
     //If focusing, use bestMove later, if not, use randomMove
     //1 - Impossible
     //0 - Full random moves
-    const isFocusing = function() {    
-        if (focus >=1 ) {
+    const isFocusing = function () {
+        if (focus >= 1) {
             return true;
         } else {
             dice = Math.random();
@@ -27,22 +27,34 @@ const playerFactory = function (name, mark, isHuman, focus) {
         }
     }
 
-    return { name, mark, isHuman, focus, score, randomMove, isFocusing }
+    return { name, mark, color, isHuman, focus, score, randomMove, isFocusing }
 }
 
 
 const gameController = (function () {
 
-    const Player1 = playerFactory('Player 1', '❌', true, 1);
-    const Player2 = playerFactory('Player 2', '⭕', false, 1);
+    const Player1 = playerFactory('Player 1', 'X', 'blue', true, 1);
+    const Player2 = playerFactory('Player 2', 'O', 'red', false, 1);
 
     let currentPlayer = Player1;
     let enemyPlayer = Player2;
     let gameOver = false;
-    
-    let tree = {};
+
+    let gameState;
 
     const newGame = function () {
+
+        gameState = {
+            scores: [],
+            boards: [],
+            selectedMove: undefined,
+            reset: function () {
+                this.scores = [];
+                this.boards = [];
+                this.selectedMove = undefined;
+            }
+        }
+
         currentPlayer = Player1;
         enemyPlayer = Player2;
         gameOver = false;
@@ -50,6 +62,7 @@ const gameController = (function () {
         uiController.setStatusMessage(`Current player: ${currentPlayer.name}`);
         uiController.updatePlayersInfo(Player1, Player2);
         uiController.renderBoard(gameBoard.getBoard());
+        uiController.renderPossibleMoves(gameState);
     }
 
     const _togglePlayers = function () {
@@ -72,19 +85,15 @@ const gameController = (function () {
 
     const _checkTie = function (board, mark) {
         const win = _checkWin(board, mark);
+        const isEmptySpot = board.some(e => e === '');
 
-        let emptyCells = 0;
-        for (let i = 0; i<board.length; i++) {
-            if (board[i] === '') emptyCells++;
-        }
-
-        const result = (win === false && emptyCells === 0);
+        const result = (win === false && !isEmptySpot);
         return result ? true : false;
     }
 
-    const _bestMove = function(board){
+    const _bestMove = function (board) {
 
-        tree = {};
+        gameState.reset();
 
         console.log(`${currentPlayer.name}'s turn`)
         const depth = 0
@@ -92,52 +101,61 @@ const gameController = (function () {
         let bestScore = -Infinity;
         let bestMove = -1;
 
-        for (let i = 0; i<board.length; i++) {
+        for (let i = 0; i < board.length; i++) {
+
             if (board[i] === '') {
                 board[i] = currentPlayer.mark
-                tree[i] = {};
+
                 let score = _miniMax(board, i, i, false);
-                tree[i][i] = score;
+                //GameState
+                gameState.boards[i] = Array.from(board);
+                gameState.scores[i] = score;
+
                 board[i] = '';
                 if (score > bestScore) {
                     bestScore = score;
                     bestMove = i;
                 }
+            } else {
+                gameState.boards[i] = '';
+                gameState.scores[i] = '';
+
             }
         }
-        console.dir(tree);
+        gameState.selectedMove = bestMove;
+        console.dir(gameState);
         return bestMove;
     };
 
-    const _miniMax = function(board, level, depth, isMaximizing) {
+    const _miniMax = function (board, level, depth, isMaximizing) {
 
         const currentPlayerWin = _checkWin(board, currentPlayer.mark);
         const enemyWin = _checkWin(board, enemyPlayer.mark);
         const tie = _checkTie(board, currentPlayer.mark);
-        
+
         if (currentPlayerWin) return 10;
         if (enemyWin) return -10;
         if (tie) return 0;
 
         if (isMaximizing) {
             let bestScore = -Infinity;
-            for (let i=0;i<board.length; i++) {
+            for (let i = 0; i < board.length; i++) {
                 if (board[i] === '') {
                     board[i] = currentPlayer.mark
                     let score = _miniMax(board, level, i, false);
-                    board[i] = '';    
-                    bestScore = Math.max(score, bestScore); 
+                    board[i] = '';
+                    bestScore = Math.max(score, bestScore);
                 }
             }
             return bestScore;
         } else {
             let bestScore = Infinity;
-            for (let i=0;i<board.length; i++) {
+            for (let i = 0; i < board.length; i++) {
                 if (board[i] === '') {
                     board[i] = enemyPlayer.mark
                     let score = _miniMax(board, level, i, true);
-                    board[i] = '';    
-                    bestScore = Math.min(score, bestScore); 
+                    board[i] = '';
+                    bestScore = Math.min(score, bestScore);
                 }
             }
             return bestScore;
@@ -149,7 +167,7 @@ const gameController = (function () {
         if (gameBoard.isCellEmpty(cell) && !gameOver) {
 
             gameBoard.setMark(cell, currentPlayer.mark);
-
+            uiController.cellSelected(cell, currentPlayer.color);
             uiController.renderBoard(gameBoard.getBoard());
 
             if (_checkWin(gameBoard.getBoard(), currentPlayer.mark)) {
@@ -164,17 +182,19 @@ const gameController = (function () {
             }
 
             if (!currentPlayer.isHuman && !gameOver) {
-                let nextMove 
+                let nextMove
                 currentPlayer.isFocusing() ? nextMove = _bestMove(gameBoard.getBoard()) : nextMove = currentPlayer.randomMove(gameBoard.getEmptyCells());
                 gameBoard.setMark(nextMove, currentPlayer.mark);
+                uiController.cellSelected(nextMove, currentPlayer.color);
                 uiController.renderBoard(gameBoard.getBoard());
+                uiController.renderPossibleMoves(gameState);
                 if (_checkWin(gameBoard.getBoard(), currentPlayer.mark)) {
                     gameOver = true;
                     currentPlayer.score++;
                     uiController.setStatusMessage(`You lost, ${currentPlayer.name} won!`)
                 } else if (_checkTie(gameBoard.getBoard(), currentPlayer.mark)) {
                     gameOver = true;
-                    uiController.setStatusMessage('It\'s a tie! Please press play again!') 
+                    uiController.setStatusMessage('It\'s a tie! Please press play again!')
                 } else {
                     _togglePlayers();
                 }
@@ -182,12 +202,13 @@ const gameController = (function () {
         }
     }
 
-    return { placeMark, newGame, tree }
+    return { placeMark, newGame, gameState }
 })();
 const uiController = (function () {
 
-    const gameBoard = document.querySelector('.gameBoard');
-    const statusMessage = document.querySelector('.statusMessage p');
+    const gameBoard = document.querySelector('.gameboard');
+    const statusMessage = document.querySelector('.status-message p');
+    const uiPossibleMoves = document.querySelector('.possible-moves');
 
     const uiPlayer1Name = document.querySelector('#player1Name');
     const uiPlayer1Score = document.querySelector('#player1Score');
@@ -195,6 +216,7 @@ const uiController = (function () {
     const uiPlayer2Name = document.querySelector('#player2Name');
     const uiPlayer2Score = document.querySelector('#player2Score');
     const uiPlayer2Mark = document.querySelector('#player2Mark');
+
 
     const uiNewGameBtn = document.querySelector('#newGame');
     const uiShowMiniMaxScores = document.querySelector('#showMiniMax');
@@ -206,6 +228,10 @@ const uiController = (function () {
     cells.forEach(e => {
         e.addEventListener('click', gameController.placeMark)
     })
+
+    const cellSelected = function (cell, color) {
+        cells[cell].style.color = color;
+    }
 
     const renderBoard = function (board) {
         board.forEach((cell, index) => {
@@ -227,7 +253,46 @@ const uiController = (function () {
         uiPlayer2Score.textContent = p2.score;
     }
 
-    return { renderBoard, setStatusMessage, updatePlayersInfo }
+    const renderPossibleMoves = function (possibleMoves) {
+
+        uiPossibleMoves.innerHTML = '';
+
+        possibleMoves.scores.forEach((score, i) => {
+            if (score !== '') {
+                const moves = document.createElement('div');
+                moves.classList.add('move');
+                moves.textContent = `Score: ${score}`
+                const gameBoard = document.createElement('div');
+                gameBoard.classList.add('gameboard');
+                gameBoard.classList.add('gameboard-small')
+                if (i === possibleMoves.selectedMove) {
+                    moves.classList.add('selected');
+                }
+
+                possibleMoves.boards[i].forEach((mark, j) => {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.classList.add('cell-small')
+                    if (j === i) {
+                        if (score === 0) cell.classList.add('possible-tie');
+                        if (score === 10) cell.classList.add('possible-win');
+                        if (score === -10) cell.classList.add('possible-loss');
+                    }
+
+                    cell.textContent = mark
+                    gameBoard.appendChild(cell);
+                }
+                )
+
+                moves.appendChild(gameBoard);
+                uiPossibleMoves.appendChild(moves);
+            }
+        })
+
+
+    }
+
+    return { renderBoard, setStatusMessage, updatePlayersInfo, cellSelected, renderPossibleMoves }
 
 })();
 
@@ -251,7 +316,7 @@ const gameBoard = (function () {
                 emptyCells.push(i);
             }
         })
-        if (debug) console.log({emptyCells})
+        if (debug) console.log({ emptyCells })
         return emptyCells;
     }
 
