@@ -223,11 +223,18 @@ const uiController = (function () {
 
     uiNewGameBtn.addEventListener('click', gameController.newGame);
 
+
     const cells = [...document.querySelectorAll('.cell')];
 
     cells.forEach(e => {
         e.addEventListener('click', gameController.placeMark)
     })
+
+    const _removeAllChildNodes = function(parent) {
+        while (parent.firstChild) {
+            parent.removeChild(parent.firstChild);
+        }
+    }
 
     const cellSelected = function (cell, color) {
         cells[cell].style.color = color;
@@ -255,7 +262,7 @@ const uiController = (function () {
 
     const renderPossibleMoves = function (possibleMoves) {
 
-        uiPossibleMoves.innerHTML = '';
+        _removeAllChildNodes(uiPossibleMoves);
 
         possibleMoves.scores.forEach((score, i) => {
             if (score !== '') {
