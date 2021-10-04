@@ -1,6 +1,6 @@
-const debug = true;
+const debug = false;
 
-const playerFactory = function (name, mark, color, isHuman, focus) {
+const playerFactory = function (name, mark, color, isHuman, strength) {
 
     let score = 0;
 
@@ -8,12 +8,12 @@ const playerFactory = function (name, mark, color, isHuman, focus) {
         return cells[Math.floor(Math.random() * cells.length)];
     }
 
-    const isFocusing = function () {
-        if (focus >= 1) {
+    const isFocusing = () => {
+        if (strength >= 1) {
             return true;
         } else {
             dice = Math.random();
-            if (dice > focus) {
+            if (dice > strength) {
                 return false;
             } else {
                 return true;
@@ -21,34 +21,42 @@ const playerFactory = function (name, mark, color, isHuman, focus) {
         }
     }
 
-    return { name, mark, color, isHuman, focus, score, randomMove, isFocusing }
+    const setStr = (str) => {
+        const strNum = parseFloat(str);
+        if (strNum !== NaN) {
+            strength = strNum;
+            if (debug) console.log(`name strengt set to ${strength}`);
+        }
+    }
+
+    const getStr = () => strength;
+
+    return { name, mark, color, isHuman, score, getStr, setStr, randomMove, isFocusing }
 }
 
+const Player1 = playerFactory('Player 1', 'X', '#076ed5', true, 1);
+const Player2 = playerFactory('Player 2', 'O', '#ff5757', false, 1);
 
 const gameController = (function () {
 
-    const Player1 = playerFactory('Player 1', 'X', 'blue', true, 1);
-    const Player2 = playerFactory('Player 2', 'O', 'red', false, 1);
 
     let currentPlayer = Player1;
     let enemyPlayer = Player2;
     let gameOver = false;
 
-    let gameState;
+    const gameState = {
+        scores: [],
+        boards: [],
+        selectedMove: undefined,
+        reset: function () {
+            this.scores = [];
+            this.boards = [];
+            this.selectedMove = undefined;
+        }
+    }
 
     const newGame = function () {
-
-        gameState = {
-            scores: [],
-            boards: [],
-            selectedMove: undefined,
-            reset: function () {
-                this.scores = [];
-                this.boards = [];
-                this.selectedMove = undefined;
-            }
-        }
-
+        gameState.reset();
         currentPlayer = Player1;
         enemyPlayer = Player2;
         gameOver = false;
@@ -66,7 +74,16 @@ const gameController = (function () {
     }
 
     const _checkWin = function (board, mark) {
-        const winCombos = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]]
+        const winCombos = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ]
 
         for (let i = 0; i < winCombos.length; i++) {
             if (board[winCombos[i][0]] === mark &&
@@ -88,7 +105,7 @@ const gameController = (function () {
 
         gameState.reset();
 
-        console.log(`${currentPlayer.name}'s turn`)
+        if (debug) console.log(`${currentPlayer.name}'s turn`)
         const depth = 0
 
         let bestScore = -Infinity;
@@ -116,11 +133,11 @@ const gameController = (function () {
             }
         }
         gameState.selectedMove = bestMove;
-        console.dir(gameState);
+        if (debug) console.dir(gameState);
         return bestMove;
     };
 
-    const _miniMax = function (board, level, depth, isMaximizing) {
+    const _miniMax = function (board, parentId, depth, isMaximizing) {
 
         const currentPlayerWin = _checkWin(board, currentPlayer.mark);
         const enemyWin = _checkWin(board, enemyPlayer.mark);
@@ -135,7 +152,7 @@ const gameController = (function () {
             for (let i = 0; i < board.length; i++) {
                 if (board[i] === '') {
                     board[i] = currentPlayer.mark
-                    let score = _miniMax(board, level, i, false);
+                    let score = _miniMax(board, parentId, i, false);
                     board[i] = '';
                     bestScore = Math.max(score, bestScore);
                 }
@@ -146,7 +163,7 @@ const gameController = (function () {
             for (let i = 0; i < board.length; i++) {
                 if (board[i] === '') {
                     board[i] = enemyPlayer.mark
-                    let score = _miniMax(board, level, i, true);
+                    let score = _miniMax(board, parentId, i, true);
                     board[i] = '';
                     bestScore = Math.min(score, bestScore);
                 }
@@ -155,7 +172,7 @@ const gameController = (function () {
         }
     }
 
-    const placeMark = (e) => {
+    const placeMark = function (e) {
         const cell = e.target.dataset.cell
         if (gameBoard.isCellEmpty(cell) && !gameOver) {
 
@@ -167,6 +184,7 @@ const gameController = (function () {
                 gameOver = true;
                 currentPlayer.score++;
                 uiController.setStatusMessage('Congratulions! You have won!')
+                uiController.updatePlayersInfo(Player1, Player2);
             } else if (_checkTie(gameBoard.getBoard(), currentPlayer.mark)) {
                 gameOver = true;
                 uiController.setStatusMessage('It\'s a tie! Please press play again!')
@@ -181,10 +199,12 @@ const gameController = (function () {
                 uiController.cellSelected(nextMove, currentPlayer.color);
                 uiController.renderBoard(gameBoard.getBoard());
                 uiController.renderPossibleMoves(gameState);
+
                 if (_checkWin(gameBoard.getBoard(), currentPlayer.mark)) {
                     gameOver = true;
                     currentPlayer.score++;
                     uiController.setStatusMessage(`You lost, ${currentPlayer.name} won!`)
+                    uiController.updatePlayersInfo(Player1, Player2);
                 } else if (_checkTie(gameBoard.getBoard(), currentPlayer.mark)) {
                     gameOver = true;
                     uiController.setStatusMessage('It\'s a tie! Please press play again!')
@@ -195,9 +215,14 @@ const gameController = (function () {
         }
     }
 
-    return { placeMark, newGame, gameState }
+    return { placeMark, newGame }
 })();
+
 const uiController = (function () {
+
+    let showMoveScores = true;
+
+    const difficultyNames = ['Can I play, Daddy?', 'Don\'t hurt me.', 'Bring \'em on!', 'I am Death incarnate!']
 
     const gameBoard = document.querySelector('.gameboard');
     const statusMessage = document.querySelector('.status-message p');
@@ -210,12 +235,42 @@ const uiController = (function () {
     const uiPlayer2Score = document.querySelector('#player2Score');
     const uiPlayer2Mark = document.querySelector('#player2Mark');
 
+    const uiSettingsBtn = document.querySelector('#settings-btn');
+    const uiSettingsModal = document.querySelector('.modal');
+    const uiSettingsCloseBtn = document.querySelector('.close-btn')
+    const uiSettingsSaveBtn = document.querySelector('#settings-save')
+    const uiSettingsAIDiff = document.querySelector('#ai-str')
+    const uiSettingsShowMiniMax = document.querySelector('#show-move-scores');
+    const uiSettingDifficultyName = document.querySelector('#difficulty-name')
+
+
+    uiSettingsBtn.addEventListener('click', () => {
+        uiSettingsAIDiff.value = Player2.getStr();
+        uiSettingsShowMiniMax.checked = showMoveScores;
+        uiSettingsModal.style.display = "block";
+    })
+
+    uiSettingsCloseBtn.addEventListener('click', () => {
+        uiSettingsModal.style.display = "none";
+    })
+
+    uiSettingsSaveBtn.addEventListener('click', () => {
+        showMoveScores = uiSettingsShowMiniMax.checked;
+        Player2.setStr(uiSettingsAIDiff.value);
+        uiSettingsModal.style.display = "none";
+    })
+
+    uiSettingsAIDiff.addEventListener('change', () => {
+        const value = parseFloat(uiSettingsAIDiff.value)
+        if (value < 0.26) uiSettingDifficultyName.textContent = difficultyNames[0]
+        else if (value <0.51) uiSettingDifficultyName.textContent = difficultyNames[1]
+        else if (value <0.76) uiSettingDifficultyName.textContent = difficultyNames[2]
+        else uiSettingDifficultyName.textContent = difficultyNames[3]
+    })
 
     const uiNewGameBtn = document.querySelector('#newGame');
-    const uiShowMiniMaxScores = document.querySelector('#showMiniMax');
 
     uiNewGameBtn.addEventListener('click', gameController.newGame);
-
 
     const cells = [...document.querySelectorAll('.cell')];
 
@@ -223,7 +278,7 @@ const uiController = (function () {
         e.addEventListener('click', gameController.placeMark)
     })
 
-    const _removeAllChildNodes = function(parent) {
+    const _removeAllChildNodes = function (parent) {
         while (parent.firstChild) {
             parent.removeChild(parent.firstChild);
         }
@@ -257,38 +312,38 @@ const uiController = (function () {
 
         _removeAllChildNodes(uiPossibleMoves);
 
-        possibleMoves.scores.forEach((score, i) => {
-            if (score !== '') {
-                const moves = document.createElement('div');
-                moves.classList.add('move');
-                moves.textContent = `Score: ${score}`
-                const gameBoard = document.createElement('div');
-                gameBoard.classList.add('gameboard');
-                gameBoard.classList.add('gameboard-small')
-                if (i === possibleMoves.selectedMove) {
-                    moves.classList.add('selected');
-                }
-
-                possibleMoves.boards[i].forEach((mark, j) => {
-                    const cell = document.createElement('div');
-                    cell.classList.add('cell');
-                    cell.classList.add('cell-small')
-                    if (j === i) {
-                        if (score === 0) cell.classList.add('possible-tie');
-                        if (score === 10) cell.classList.add('possible-win');
-                        if (score === -10) cell.classList.add('possible-loss');
+        if (showMoveScores) {
+            possibleMoves.scores.forEach((score, i) => {
+                if (score !== '') {
+                    const moves = document.createElement('div');
+                    moves.classList.add('move');
+                    moves.textContent = `Score: ${score}`
+                    const gameBoard = document.createElement('div');
+                    gameBoard.classList.add('gameboard');
+                    gameBoard.classList.add('gameboard-small')
+                    if (i === possibleMoves.selectedMove) {
+                        moves.classList.add('selected');
                     }
 
-                    cell.textContent = mark
-                    gameBoard.appendChild(cell);
+                    possibleMoves.boards[i].forEach((mark, j) => {
+                        const cell = document.createElement('div');
+                        cell.classList.add('cell');
+                        cell.classList.add('cell-small')
+                        if (j === i) {
+                            if (score === 0) cell.classList.add('possible-tie');
+                            if (score === 10) cell.classList.add('possible-win');
+                            if (score === -10) cell.classList.add('possible-loss');
+                        }
+
+                        cell.textContent = mark
+                        gameBoard.appendChild(cell);
+                    })
+
+                    moves.appendChild(gameBoard);
+                    uiPossibleMoves.appendChild(moves);
                 }
-                )
-
-                moves.appendChild(gameBoard);
-                uiPossibleMoves.appendChild(moves);
-            }
-        })
-
+            })
+        }
 
     }
 
@@ -333,4 +388,3 @@ const gameBoard = (function () {
 })();
 
 gameController.newGame();
-

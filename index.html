@@ -1,33 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Odin Project - TicTacToe</title>
-    
-    
+
+
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
     <div class="main">
+        <h1 class="jumbo-text">
+            <span class="blue">Tic</span><span class="red">Tac</span><span class="blue">Toe</span>
+        </h1>
         <div class="header">
+
             <div class="player-info">
-                <p id="player1Name">Player 1</p>
-                <p id="player1Mark">Mark: X</p>
-                <p id="player1Score">Score: 0</p>
+                <p><span id="player1Name">Player 1</span> - <span id="player1Mark">X</span></p>
+                <p><span id="player1Score" class="big blue">0</span></p>
             </div>
             <div class="player-info">
-                <p id="player2Name">Player 2</p>
-                <p id="player2Mark">Mark: O</p>
-                <p id="player2Score">Score: 0</p>
+                <p><span id="player2Name">Player 2</span> - <span id="player2Mark">X</span></p>
+                <p><span id="player2Score" class="big red">0</span></p>
             </div>
         </div>
-        <div class="status-message">
-            <p>Status Message comes here</p>
-        </div>
+
         <div class="gameboard gameboard-big">
             <div data-cell="0" class="cell cell-big"><p class="mark"></p></div>
             <div data-cell="1" class="cell cell-big"><p class="mark"></p></div>
@@ -37,19 +41,64 @@
             <div data-cell="5" class="cell cell-big"><p class="mark"></p></div>
             <div data-cell="6" class="cell cell-big"><p class="mark"></p></div>
             <div data-cell="7" class="cell cell-big"><p class="mark"></p></div>
-            <div data-cell="8" class="cell cell-big"><p class="mark"></p></div>                        
+            <div data-cell="8" class="cell cell-big"><p class="mark"></p></div>
         </div>
-        <div>
-            <button id="newGame">New Game</button>
-            <label for="shomMiniMax">Show MiniMax Computed Scores</label>
-            <input type="checkbox" name="showMiniMax" id="showMiniMax" checked>
+        <div class="status-bar">
+            <button id="newGame" class="ui-btn-rounded">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                    class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+                    <path
+                        d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" />
+                    <path fill-rule="evenodd"
+                        d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" />
+                </svg>
+            </button>
+            <div class="status-message">
+                <p>Status Message comes here</p>
+            </div>
+            <button id="settings-btn" class="ui-btn-rounded">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                    class="bi bi-gear-wide" viewBox="0 0 16 16">
+                    <path
+                        d="M8.932.727c-.243-.97-1.62-.97-1.864 0l-.071.286a.96.96 0 0 1-1.622.434l-.205-.211c-.695-.719-1.888-.03-1.613.931l.08.284a.96.96 0 0 1-1.186 1.187l-.284-.081c-.96-.275-1.65.918-.931 1.613l.211.205a.96.96 0 0 1-.434 1.622l-.286.071c-.97.243-.97 1.62 0 1.864l.286.071a.96.96 0 0 1 .434 1.622l-.211.205c-.719.695-.03 1.888.931 1.613l.284-.08a.96.96 0 0 1 1.187 1.187l-.081.283c-.275.96.918 1.65 1.613.931l.205-.211a.96.96 0 0 1 1.622.434l.071.286c.243.97 1.62.97 1.864 0l.071-.286a.96.96 0 0 1 1.622-.434l.205.211c.695.719 1.888.03 1.613-.931l-.08-.284a.96.96 0 0 1 1.187-1.187l.283.081c.96.275 1.65-.918.931-1.613l-.211-.205a.96.96 0 0 1 .434-1.622l.286-.071c.97-.243.97-1.62 0-1.864l-.286-.071a.96.96 0 0 1-.434-1.622l.211-.205c.719-.695.03-1.888-.931-1.613l-.284.08a.96.96 0 0 1-1.187-1.186l.081-.284c.275-.96-.918-1.65-1.613-.931l-.205.211a.96.96 0 0 1-1.622-.434L8.932.727zM8 12.997a4.998 4.998 0 1 1 0-9.995 4.998 4.998 0 0 1 0 9.996z">
+                    </path>
+                </svg>
+            </button>
         </div>
-
+        <hr class="gray">
         <div class="possible-moves">
-
         </div>
     </div>
 
+    <div class="modal settings">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h1>Settings</h1>
+            <div class="settings-content">
+                <p>Probability of the best move. Minimum means completly random moves, and maximum means always the best move.</p>
+                <div class="form_section">
+                    <div class="sliderContainer">
+                        <label for="ai-str">AI strength</label>
+                        <input type="range" name="ai-str" id="ai-str" min="0" max="1" step="0.1">
+                    </div>
+                    <p id="difficulty-name" class="red">I am Death incarnate!</p>
+                </div>
+                <div class="form_section">
+                    <label for="show-move-scores">Show minimax scores?</label>
+                    <input type="checkbox" name="show-move-scores" id="show-move-scores" checked>
+                </div>
+                <div class="form_section">
+                    <div class="settings-content">
+                        <button id="settings-save" >Save</button>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
     <script src="app.js"></script>
 </body>
+
 </html>

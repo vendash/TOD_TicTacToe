@@ -1,48 +1,71 @@
 :root {
     --backgroundColorB: #FBFCFE;
-
     --cellBackgroundColor: #fff;
     --cellBackgroundCOlorWInning: rgb(100, 190, 100);
-
-    --shadow: 0px 4px 24px 0px rgba(79,114,205,0.15);
-    --shadowBig: 0px 6px 6px 2px rgba(79,114,205,0.2)
+    --shadow: 0px 4px 24px 0px rgba(79, 114, 205, 0.15);
+    --shadowBig: 0px 6px 6px 2px rgba(79, 114, 205, 0.2)
 }
 
 body {
     margin: 0px;
+    margin-top: 20px;
+    font-family: 'Fredoka One', cursive;
 }
 
 .main {
     margin: 0px auto;
-    width: 85%;
+    width: 600px;
     background-color: var(--backgroundColorB);
     padding: 20px;
-    border: 1px solid rgba(0,0,0, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 5px;
-    box-shadow: 0px 0px 30px rgba(0,0,0, 0.2);
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.2);
 }
 
 .header {
     display: flex;
-    justify-content: space-between;
-
+    justify-content:center;
 }
 
 .player-info {
     width: 45%;
-    background-color: lightblue;
-    border: 1px solid rgba(0,0,0, 0.2);
-    border-radius: 5px;
-    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.blue {
+    color: #076ed5;
+}
+
+.red {
+    color: #ff5757;
+}
+
+.big {
+    font-size: 2em;
+}
+
+hr {
+    border: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.jumbo-text {
+    font-size: 3rem;
+    font-style: italic;
+    text-align: center;
+}
+
+.status-bar {
+    display: flex;
+    justify-content: space-between;
 }
 
 .status-message {
-    margin-top: 1em;
+    padding: 5px 30px;
     box-sizing: border-box;
-    width: 100%;
-    background-color: lightgreen;
-    border: 1px solid rgba(0,0,0, 0.2);
-    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50px;
     text-align: center;
 }
 
@@ -72,45 +95,48 @@ body {
     align-items: center;
     justify-content: center;
     text-align: center;
-    font-family: 'Fredoka One', cursive;
-    border: 1px solid rgba(0,0,0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .cell-big {
-    width: 150px;
-    height: 150px;
-    font-size: 8em;
+    width: 120px;
+    height: 120px;
+    font-size: 6em;
     border-radius: 20px;
 }
 
 .cell-small {
-
     width: 18px;
     height: 18px;
     border-radius: 2px;
-
 }
 
 .cell-big:hover {
     box-shadow: var(--shadowBig);
-    border: 1px solid rgba(0,0,0, 0.25);
-    transition: background-color .2s ease-out,transform .2s ease-out,box-shadow .2s ease-out;
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    transition: background-color .2s ease-out, transform .2s ease-out, box-shadow .2s ease-out;
 }
 
 .possible-moves {
-    display: flex;
+    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr)
 }
 
 .move {
     margin: 5px;
     padding: 5px;
-    border: 1px solid rgba(0,0,0, 0.1);
-    background-color: rgba(0,0,0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.1);
     border-radius: 5px;
 }
 
+.move:hover {
+    box-shadow: var(--shadow);
+}
+
 .selected {
-    border: 2px solid rgba(0,0,0, 0.75);
+    border: 2px solid rgba(0, 0, 0, 0.75);
 }
 
 .mark {
@@ -133,4 +159,75 @@ body {
 
 .possible-tie {
     border: 2px solid grey;
+}
+
+.ui-btn-rounded {
+    box-sizing: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    margin: 10px;
+    border-radius: 50%;
+    background-color: var(--backgroundColorB);
+    border: 1px solid rgba(0, 0, 0, 0.2)
+}
+
+.ui-btn-rounded:hover {
+    border: 1px solid rgba(0, 0, 0, 0.5)
+}
+
+.ui-btn-modal {
+    border: none;
+    outline: none;
+    background: rgb(100, 190, 100);
+    padding: 15px 0;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.modal {
+    display:none;
+    position: fixed;
+    padding-top: 50px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    position: relative;
+    background-color: white;
+    padding: 20px;
+    margin: auto;
+    width: 400px;
+}
+
+.settings-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-player-name {
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    padding: 0.5rem;
+    border-radius: 0.3em;
+}
+
+.close-btn {
+    cursor: pointer;
+    float: right;
+    color: lightgray;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.close-btn:hover {
+    color: darkgray;
+}
+
+.form_section {
+    margin-bottom: 15px;
 }
